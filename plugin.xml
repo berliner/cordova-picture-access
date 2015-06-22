@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+xmlns:android="http://schemas.android.com/apk/res/android"
+           id="com.markveys.picture-access"
+      version="0.1">
+
+    <name>Check access to pictures on a device</name>
+    <description>Picture access plugin for cordova by markveys</description>
+    <license>MIT</license>
+    <keywords>picture, access</keywords>
+
+    <js-module src="www/PictureAccess.js" name="PictureAccess">
+      <clobbers target="PictureAccess" />
+    </js-module>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file target="config.xml" parent="/*">
+            <feature name="PictureAccess">
+                <param name="ios-package" value="PictureAccess" />
+            </feature>
+        </config-file>
+
+        <header-file src="src/ios/PictureAccess.h" />
+        <source-file src="src/ios/PictureAccess.m" />
+    </platform>
+
+</plugin>
