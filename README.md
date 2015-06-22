@@ -3,7 +3,8 @@ Simple cordova plugin for access check to the camera roll or picture gallery
 
 # Usage
 
-```$window.plugins.pictureAccess.checkAccess(
+```javascript
+$window.plugins.pictureAccess.checkAccess(
   function() {
     // Go ahead and access the picture, e.g. with cordova image picker
   },
