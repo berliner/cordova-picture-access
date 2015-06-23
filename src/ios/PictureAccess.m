@@ -16,33 +16,39 @@
     CDVPluginResult* result = nil;
 
     if (authStatus == ALAuthorizationStatusAuthorized) {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Access granted"];
         NSLog(@"Access to picture gallery granted");
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Access granted"];
+        [self invokeCallback:command withResult:result];
     }
     else if (authStatus == ALAuthorizationStatusNotDetermined) {
-        NSLog(@"Access to picture gallery not yet determined");
+        NSLog(@"Access to picture gallery not yet determined. Will ask user.");
         __block CDVPluginResult* result = nil;
 
         ALAssetsLibrary *lib = [[ALAssetsLibrary alloc] init];
         [lib enumerateGroupsWithTypes:ALAssetsGroupSavedPhotos usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
-            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Access not determined"];
-            NSLog(@"Access to picture gallery granted");
+            NSLog(@"Access to picture gallery granted by user");
+            result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"Access granted"];
+            [self invokeCallback:command withResult:result];
         } failureBlock:^(NSError *error) {
             if (error.code == ALAssetsLibraryAccessUserDeniedError) {
+                NSLog(@"Access to picture gallery denied by user");
                 result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Access denied"];
-                NSLog(@"Access to picture gallery denied");
+                [self invokeCallback:command withResult:result];
             } else{
-                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Access denied"];
                 NSLog(@"Other error code: %i", error.code);
+                result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Access denied"];
+                [self invokeCallback:command withResult:result];
             }
         }];
-
-
     }
     else {
-        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Access denied"];
         NSLog(@"Access to picture gallery denied");
+        result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"Access denied"];
+        [self invokeCallback:command withResult:result];
     }
+}
+
+- (void) invokeCallback:(CDVInvokedUrlCommand *)command withResult:(CDVPluginResult *)result {
     [self.commandDelegate sendPluginResult:result callbackId:command.callbackId];
 }
 
